@@ -30,6 +30,7 @@ public class Main {
             System.out.println("2 - Cadastrar despesa");
             System.out.println("3 - Listar transações");
             System.out.println("4 - Consultar saldo");
+            System.out.println("5 - Excluir transação");
             System.out.println("0 - Sair");
 
             System.out.print("Escolha uma opção: ");
@@ -124,6 +125,34 @@ public class Main {
                     System.out.println("SALDO DA CONTA:");
                     System.out.println("R$ " + minhaConta.calcularSaldo());
                     break;
+
+                case 5: {
+                    System.out.println("EXCLUIR TRANSAÇÃO");
+                    if (minhaConta.getQuantidadeTransacoes() == 0) {
+                        System.out.println("Não existem transações para excluir.");
+                        break;
+                    }
+
+                    minhaConta.listarTransacoes();
+
+                    System.out.print("Digite o número da transação que deseja excluir: ");
+                    int numero;
+
+                    try {
+                        numero = scanner.nextInt();
+                        scanner.nextLine();
+                    } catch (java.util.InputMismatchException e) {
+                        System.out.println("Erro: digite um número inteiro!");
+                        scanner.nextLine();
+                        break;
+                    }
+
+                    int indice = numero - 1;
+
+                    minhaConta.excluirTransacao(indice);
+
+                    break;
+                }
 
                 case 0:
                     System.out.println("Encerrando FinanceJava...");
