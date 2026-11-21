@@ -1,9 +1,10 @@
+package com.financejava;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Scanner;
 
-// Controla a interação pelo terminal e encaminha as operações para a conta.
 public class Main {
 
     // Mostra as opções disponíveis; a leitura da escolha acontece no main.
@@ -31,22 +32,21 @@ public class Main {
         }
 
         System.out.print("Valor: ");
-        double valor;
-        // Tenta ler o número; o catch trata uma entrada incompatível, como letras.
+        BigDecimal valor;
         try {
-            valor = scanner.nextDouble();
-            // Consome o restante da linha após o número ou descarta a entrada inválida.
-            scanner.nextLine();
-        } catch (java.util.InputMismatchException e) {
-            System.out.println("ERRO! Digite um valor numérico.");
-            // Consome o restante da linha após o número ou descarta a entrada inválida.
-            scanner.nextLine();
+            String entrada = scanner.nextLine();
+
+            // Converte a vírgula decimal em ponto para criar o BigDecimal.
+            entrada = entrada.replace(",", ".");
+            valor = new BigDecimal(entrada);
+
+        } catch (NumberFormatException e) {
+            System.out.println("ERRO! Digite um valor numérico válido.");
             return;
         }
 
-        // Rejeita NaN, infinito, zero e negativos; return encerra apenas este cadastro.
-        if (!Double.isFinite(valor) || valor <= 0) {
-            System.out.println("ERRO! O valor deve ser finito e maior que zero.");
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+            System.out.println("ERRO! O valor deve ser maior que zero.");
             return;
         }
 
@@ -79,14 +79,14 @@ public class Main {
             return;
         }
 
-        // A lista exibida começa em 1; os índices do ArrayList começam em 0.
+        // Subtrai 1 do número exibido para obter o índice da lista.
         int indice = numero - 1;
 
         conta.excluirTransacao(indice);
     }
 
-    // Usa a conta recebida como parâmetro; return cancela a edição se os dados forem inválidos.
-    // conta recebe a mesma instância chamada minhaConta no main; scanner reutiliza o leitor do terminal.
+    // Seleciona uma transação da conta e permite editar seu valor ou sua descrição.
+    // Recebe a conta e o leitor do terminal criados no método main.
     public static void editarTransacao(Conta conta, Scanner scanner) {
         System.out.println("EDITAR TRANSAÇÃO");
         // Sem registros, retorna ao chamador sem pedir um número de transação.
@@ -103,16 +103,16 @@ public class Main {
         try {
             // nextInt() exige um inteiro; letras ou números decimais são tratados no catch.
             numero = scanner.nextInt();
-            // Consome o restante da linha, inclusive uma entrada inválida ao passar pelo catch.
+            // Consome o restante da linha após a leitura do inteiro.
             scanner.nextLine();
         } catch (java.util.InputMismatchException e) {
             System.out.println("Erro: digite um número inteiro!");
-            // Consome o restante da linha, inclusive uma entrada inválida ao passar pelo catch.
+            // Descarta a linha com a entrada inválida.
             scanner.nextLine();
             return;
         }
 
-        // A lista exibida começa em 1; os índices do ArrayList começam em 0.
+        // Subtrai 1 do número exibido para obter o índice da lista.
         int indice = numero - 1;
 
         // Confirma que a posição existe antes de pedir os novos dados.
@@ -131,11 +131,11 @@ public class Main {
         try {
             // Guarda a escolha do campo: 1 altera o valor; 2 altera a descrição.
             tipoEdicao = scanner.nextInt();
-            // Consome o restante da linha, inclusive uma entrada inválida ao passar pelo catch.
+            // Consome o restante da linha após a leitura do inteiro.
             scanner.nextLine();
         } catch (java.util.InputMismatchException e) {
             System.out.println("Erro: digite um número inteiro!");
-            // Consome o restante da linha, inclusive uma entrada inválida ao passar pelo catch.
+            // Descarta a linha com a entrada inválida.
             scanner.nextLine();
             return;
         }
@@ -143,23 +143,22 @@ public class Main {
         // O valor e a descrição têm leituras e validações diferentes.
         if (tipoEdicao == 1) {
             System.out.print("Digite o novo valor da transação: ");
-            double novoValor;
+            BigDecimal novoValor;
 
             try {
-                // nextDouble() lê o novo valor numérico da movimentação.
-                novoValor = scanner.nextDouble();
-                // Consome o restante da linha, inclusive uma entrada inválida ao passar pelo catch.
-                scanner.nextLine();
-            } catch (java.util.InputMismatchException e) {
-                System.out.println("Erro: digite um valor numérico!");
-                // Consome o restante da linha, inclusive uma entrada inválida ao passar pelo catch.
-                scanner.nextLine();
+                String entrada = scanner.nextLine();
+
+                entrada = entrada.replace(",", ".");
+
+                novoValor = new BigDecimal(entrada);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: digite um valor numérico válido!");
                 return;
             }
 
-            // Impede substituir o valor atual por um número inválido.
-            if (!Double.isFinite(novoValor) || novoValor <= 0) {
-                System.out.println("ERRO! O valor deve ser um número positivo e válido.");
+            if (novoValor.compareTo(BigDecimal.ZERO) <= 0) {
+                System.out.println("Erro: o valor deve ser maior que zero!");
                 return;
             }
             // A Conta localiza a transação; o setter valida o valor e a Conta informa o resultado.
@@ -255,7 +254,7 @@ public class Main {
                 case 6: {
                     // Passa a conta e o leitor para o método responsável pela edição.
                     editarTransacao(minhaConta, scanner);
-                    // Ao voltar do método, encerra este case sem executar o case 0.
+                    // O break devolve o controle ao laço do menu após a edição.
                     break;
                 }
 

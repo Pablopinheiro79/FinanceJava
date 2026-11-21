@@ -1,10 +1,14 @@
+package com.financejava;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
 // Agrupa as transações e oferece operações de cadastro, alteração e consulta.
 public class Conta {
+
+    
 
     // private restringe o acesso à lista. final impede trocar a lista, mas permite alterar seus itens.
     private final ArrayList<Transacao> transacoes;
@@ -22,7 +26,7 @@ public class Conta {
         transacoes.add(t);
     }
 
-    // Remove pela posição interna da lista; as posições seguintes são reorganizadas.
+    // Remove a transação pelo índice. Os itens seguintes recuam uma posição.
     public void excluirTransacao(int indice) {
         // Uma posição válida vai de 0 até size() - 1.
         if (indice >= 0 && indice < transacoes.size()) {
@@ -34,7 +38,7 @@ public class Conta {
     }
 
     // Altera o valor de uma transação existente e informa se a validação permitiu a mudança.
-    public void editarTransacao(int indice, double novoValor) {
+    public void editarTransacao(int indice, BigDecimal novoValor) {
         // Uma posição válida vai de 0 até size() - 1.
         if (indice >= 0 && indice < transacoes.size()) {
             Transacao t = transacoes.get(indice);
@@ -68,14 +72,14 @@ public class Conta {
     }
 
     // Recalcula o saldo: soma receitas e subtrai despesas.
-    public double calcularSaldo() {
-        double saldo = 0;
-        // Percorre cada objeto da lista; t representa a transação da vez.
+    public BigDecimal calcularSaldo() {
+        BigDecimal saldo = BigDecimal.ZERO;
+        // Cada soma ou subtração com BigDecimal retorna um novo saldo.
         for (Transacao t : transacoes) {
             if (t.isReceita()) {
-                saldo += t.getValor();
+                saldo = saldo.add(t.getValor());
             } else if (t.isDespesa()) {
-                saldo -= t.getValor();
+                saldo = saldo.subtract(t.getValor());
             }
         }
         return saldo;
