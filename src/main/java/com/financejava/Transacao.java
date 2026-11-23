@@ -2,14 +2,14 @@ package com.financejava;
 
 import java.math.BigDecimal;
 
+// Representa uma receita ou despesa com descrição e valor monetário positivo.
 public class Transacao {
 
-    // Os atributos privados guardam os dados; os métodos controlam seu acesso.
     private String descricao;
     private BigDecimal valor;
     private String tipo;
 
-    // Valida a descrição, o valor e o tipo antes de preencher os atributos.
+    // Lança IllegalArgumentException se a descrição, o valor ou o tipo for inválido.
     public Transacao(String descricao, BigDecimal valor, String tipo) {
 
         if (descricao == null || descricao.trim().isEmpty()) {
@@ -39,12 +39,11 @@ public class Transacao {
                 || "Despesa".equalsIgnoreCase(tipo);
     }
 
-    // Getter: consulta o valor sem modificá-lo.
     public BigDecimal getValor() {
         return valor;
     }
 
-    // Aceita um valor não nulo e maior que zero. Retorna true quando aceita o valor.
+    // Atualiza o valor se ele for positivo e retorna false quando a entrada é inválida.
     public boolean setValor(BigDecimal valor) {
 
     if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0) {
@@ -55,7 +54,6 @@ public class Transacao {
     return false;
 }
 
-    // Retorna o texto que identifica a movimentação.
     public String getDescricao() {
         return descricao;
     }
@@ -66,16 +64,14 @@ public class Transacao {
             this.descricao = descricao;
             return true;
         }
-        // A validação falhou: mantém o dado anterior e informa a rejeição.
         return false;
     }
 
-    // Retorna o tipo usado no cálculo do saldo.
     public String getTipo() {
         return tipo;
     }
 
-    // Atualiza o tipo somente se for Receita ou Despesa, sem distinguir maiúsculas de minúsculas.
+    // Aceita Receita ou Despesa em qualquer combinação de maiúsculas e minúsculas.
     public boolean setTipo(String tipo) {
 
         if (tipoValido(tipo)) {
@@ -86,7 +82,7 @@ public class Transacao {
         return false;
     }
 
-    // Compara sem diferenciar maiúsculas e minúsculas; a constante evita erro se tipo for null.
+    // Indica se o valor da movimentação deve ser somado ao saldo.
     public boolean isReceita() {
         return "Receita".equalsIgnoreCase(tipo);
     }

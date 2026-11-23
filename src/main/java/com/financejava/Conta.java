@@ -5,12 +5,12 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-// Agrupa as transações e oferece operações de cadastro, alteração e consulta.
+// Mantém as transações da conta em memória e calcula o saldo a partir delas.
 public class Conta {
 
     
 
-    // private restringe o acesso à lista. final impede trocar a lista, mas permite alterar seus itens.
+    // A lista mantém a ordem de inclusão usada na exibição e na exportação.
     private final ArrayList<Transacao> transacoes;
 
     // O construtor inicia cada nova conta com uma lista vazia.
@@ -18,7 +18,7 @@ public class Conta {
         transacoes = new ArrayList<>();
     }
 
-    // Recebe uma transação pronta; rejeita null para evitar erros nas consultas.
+    // Adiciona uma transação ao fim da lista e lança uma exceção se ela for nula.
     public void adicionarTransacao(Transacao t) {
         if (t == null) {
             throw new IllegalArgumentException("A transação não pode ser nula.");
@@ -26,9 +26,8 @@ public class Conta {
         transacoes.add(t);
     }
 
-    // Remove a transação pelo índice. Os itens seguintes recuam uma posição.
+    // Remove a transação pelo índice baseado em zero. Os itens seguintes recuam uma posição.
     public void excluirTransacao(int indice) {
-        // Uma posição válida vai de 0 até size() - 1.
         if (indice >= 0 && indice < transacoes.size()) {
             transacoes.remove(indice);
             System.out.println("Transação excluída com sucesso!");
@@ -37,9 +36,8 @@ public class Conta {
         }
     }
 
-    // Altera o valor de uma transação existente e informa se a validação permitiu a mudança.
+    // Solicita a alteração do valor e informa o resultado no terminal.
     public void editarTransacao(int indice, BigDecimal novoValor) {
-        // Uma posição válida vai de 0 até size() - 1.
         if (indice >= 0 && indice < transacoes.size()) {
             Transacao t = transacoes.get(indice);
             // O setter retorna true quando atualiza e false quando rejeita o valor.
@@ -54,9 +52,8 @@ public class Conta {
         }
     }
 
-    // Altera somente a descrição da transação selecionada.
+    // Solicita a alteração da descrição e informa o resultado no terminal.
     public void editarDescricao(int indice, String novaDescricao) {
-        // Uma posição válida vai de 0 até size() - 1.
         if (indice >= 0 && indice < transacoes.size()) {
             Transacao t = transacoes.get(indice);
             // A própria transação verifica se a nova descrição é válida.
@@ -71,7 +68,7 @@ public class Conta {
         }
     }
 
-    // Recalcula o saldo: soma receitas e subtrai despesas.
+    // Soma os valores das receitas e subtrai os das despesas a cada consulta.
     public BigDecimal calcularSaldo() {
         BigDecimal saldo = BigDecimal.ZERO;
         // Cada soma ou subtração com BigDecimal retorna um novo saldo.
@@ -116,5 +113,10 @@ public class Conta {
     public int getQuantidadeTransacoes() {
         return transacoes.size();
     }
+
+    // Retorna uma cópia da lista com referências às mesmas transações.
+    public ArrayList<Transacao> getTransacoes() {
+    return new ArrayList<>(transacoes);
+}
 
 }

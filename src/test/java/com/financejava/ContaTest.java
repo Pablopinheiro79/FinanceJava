@@ -5,18 +5,19 @@ import java.io.PrintStream;
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+// Verifica as operações, o cálculo do saldo e a saída de listagem da conta.
 class ContaTest {
 
     private Conta conta;
     private PrintStream originalOut;
     private ByteArrayOutputStream output;
 
+    // Usa uma conta nova e captura as mensagens do terminal a cada teste.
     @BeforeEach
     void configurarConta() {
         conta = new Conta();
@@ -25,6 +26,7 @@ class ContaTest {
         System.setOut(new PrintStream(output, true));
     }
 
+    // Restaura a saída padrão após cada teste, inclusive quando uma asserção falha.
     @AfterEach
     void restaurarSaida() {
         System.setOut(originalOut);
@@ -158,6 +160,7 @@ class ContaTest {
                 new Transacao("Salário", new BigDecimal("100"), "Receita"));
         conta.adicionarTransacao(
                 new Transacao("Aluguel", new BigDecimal("50"), "Despesa"));
+        // Limpa a saída anterior para verificar somente o texto da listagem.
         output.reset();
 
         conta.listarTransacoes();

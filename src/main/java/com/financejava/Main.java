@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    // Mostra as opções disponíveis; a leitura da escolha acontece no main.
+    // Exibe as operações disponíveis no terminal.
     public static void exibirMenu() {
         System.out.println("====== MENU PRINCIPAL ======");
         System.out.println("1 - Cadastrar receita");
@@ -19,7 +19,7 @@ public class Main {
         System.out.println("0 - Sair");
     }
 
-    // Reutiliza o mesmo cadastro: tipo recebe "Receita" ou "Despesa" conforme o menu.
+    // Valida a descrição e o valor digitados antes de cadastrar uma receita ou despesa.
     public static void cadastrarTransacao(Conta conta, Scanner scanner, String tipo) {
         System.out.println("=== CADASTRAR " + tipo.toUpperCase(Locale.ROOT) + " ===");
 
@@ -56,12 +56,11 @@ public class Main {
         System.out.println(tipo + " cadastrada com sucesso!");
     }
 
-    // Lê a escolha do usuário; a classe Conta realiza a remoção e valida o índice.
+    // Lê o número exibido no menu e delega à conta a validação do índice e a remoção.
     public static void excluirTransacao(Conta conta, Scanner scanner) {
         System.out.println("EXCLUIR TRANSAÇÃO");
         if (conta.getQuantidadeTransacoes() == 0) {
             System.out.println("Não existem transações para excluir.");
-            // Encerra este método e devolve a execução ao case 5 do menu.
             return;
         }
         conta.listarTransacoes();
@@ -75,7 +74,6 @@ public class Main {
         } catch (java.util.InputMismatchException e) {
             System.out.println("Erro: digite um número inteiro!");
             scanner.nextLine();
-            // Sem um número válido, não tenta calcular o índice nem remover um item.
             return;
         }
 
@@ -85,8 +83,7 @@ public class Main {
         conta.excluirTransacao(indice);
     }
 
-    // Seleciona uma transação da conta e permite editar seu valor ou sua descrição.
-    // Recebe a conta e o leitor do terminal criados no método main.
+    // Seleciona uma transação pelo número exibido e permite editar seu valor ou sua descrição.
     public static void editarTransacao(Conta conta, Scanner scanner) {
         System.out.println("EDITAR TRANSAÇÃO");
         // Sem registros, retorna ao chamador sem pedir um número de transação.
@@ -129,7 +126,6 @@ public class Main {
         int tipoEdicao;
 
         try {
-            // Guarda a escolha do campo: 1 altera o valor; 2 altera a descrição.
             tipoEdicao = scanner.nextInt();
             // Consome o restante da linha após a leitura do inteiro.
             scanner.nextLine();
@@ -140,7 +136,6 @@ public class Main {
             return;
         }
 
-        // O valor e a descrição têm leituras e validações diferentes.
         if (tipoEdicao == 1) {
             System.out.print("Digite o novo valor da transação: ");
             BigDecimal novoValor;
@@ -161,7 +156,7 @@ public class Main {
                 System.out.println("Erro: o valor deve ser maior que zero!");
                 return;
             }
-            // A Conta localiza a transação; o setter valida o valor e a Conta informa o resultado.
+            // A conta aplica a alteração e informa o resultado no terminal.
             conta.editarTransacao(indice, novoValor);
         } else if (tipoEdicao == 2) {
             System.out.print("Digite a nova descrição: ");
@@ -181,7 +176,7 @@ public class Main {
         }
     }
 
-    // Ponto de entrada: o Java começa a execução do programa por este método.
+    // Carrega as transações do CSV e executa o menu até a opção de saída.
     public static void main(String[] args) {
 
         // Apresenta o sistema antes de iniciar o menu.
@@ -191,8 +186,18 @@ public class Main {
         System.out.println("Desenvolvido em Java com POO");
         System.out.println("--------------------------------");
 
-        // A mesma conta é usada em todas as opções; os dados ficam apenas na memória.
+        // Carrega o CSV na conta compartilhada pelas operações do menu.
         Conta minhaConta = new Conta();
+        boolean carregamentoOK
+                = ArquivoTransacoes.carregarTransacoes(minhaConta);
+
+        // Encerra antes do menu se a leitura falhar, evitando sobrescrever o CSV na saída.
+        if (!carregamentoOK) {
+            System.out.println(
+                    "Erro no carregamento. Programa encerrado para proteger os dados."
+            );
+            return;
+        }
 
         // Configura a apresentação do saldo em reais, com o padrão brasileiro.
         NumberFormat moeda = NumberFormat.getCurrencyInstance(
@@ -219,7 +224,6 @@ public class Main {
                 continue;
             }
 
-            // Executa o case escolhido; break encerra o switch e o laço pode continuar.
             switch (opcao) {
                 // Receita e despesa compartilham o método, mudando apenas o tipo.
                 case 1: {
@@ -258,8 +262,9 @@ public class Main {
                     break;
                 }
 
-                // Após este case, opcao vale 0 e a condição do while encerra o laço.
+                // Tenta salvar as transações no CSV antes de encerrar o programa.
                 case 0:
+                    ArquivoTransacoes.salvarTransacoes(minhaConta);
                     System.out.println("Encerrando FinanceJava...");
                     break;
 
