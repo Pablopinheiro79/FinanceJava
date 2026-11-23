@@ -4,3 +4,5 @@ bin/
 out/
 target/
 tempCodeRunnerFile.java
+# Arquivos financeiros
+transacoes*.csv

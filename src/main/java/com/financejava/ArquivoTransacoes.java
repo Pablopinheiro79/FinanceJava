@@ -167,7 +167,7 @@ public class ArquivoTransacoes {
     // Acrescenta os registros à conta depois de ler e validar todos eles.
     // Um arquivo ausente é aceito. Erros de leitura ou de conteúdo retornam false.
     public static boolean carregarTransacoes(Conta conta) {
-
+       
         try (BufferedReader leitor
                 = Files.newBufferedReader(
                         ARQUIVO_TRANSACOES,
